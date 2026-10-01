@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Cerberus">
+  <defs>
+    <linearGradient id="maroon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d23350"/>
+      <stop offset="1" stop-color="#7a1324"/>
+    </linearGradient>
+    <linearGradient id="maroonSoft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c22d46"/>
+      <stop offset="1" stop-color="#8f1a2e"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="252" height="252" rx="58" fill="#0c0a0b"/>
+  <rect x="2.5" y="2.5" width="251" height="251" rx="57.5" fill="none" stroke="#b0263a" stroke-opacity="0.35" stroke-width="2"/>
+
+  <path d="M56 210 L56 120 A72 72 0 0 1 200 120 L200 210"
+        fill="none" stroke="url(#maroon)" stroke-width="20" stroke-linecap="round"/>
+
+  <path d="M88 116 L104 116 L104 168 L96 182 L88 168 Z" fill="url(#maroonSoft)"/>
+  <path d="M119 112 L137 112 L137 182 L128 198 L119 182 Z" fill="url(#maroon)"/>
+  <path d="M152 116 L168 116 L168 168 L160 182 L152 168 Z" fill="url(#maroonSoft)"/>
+</svg>

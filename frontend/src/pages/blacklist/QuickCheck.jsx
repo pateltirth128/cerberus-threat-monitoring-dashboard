@@ -1,0 +1,95 @@
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { checkBlacklist } from '../../services/blacklist/checkService';
+import { exportBlacklistCsv } from '../../services/tools';
+import ResultTableQuick from '../../components/blacklist/ResultTableQuick';
+import CreditFooter from '../../components/shared/CreditFooter';
+
+const QuickCheck = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const hostname = location.state?.hostname || searchParams.get('hostname');
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        if (hostname && isMounted) {
+          const result = await checkBlacklist(hostname);
+          setData(result);
+        } else if (isMounted) {
+          setError('No hostname was provided. Go back and submit a hostname.');
+        }
+      } catch (error) {
+        setError(error.message || 'Failed to check blacklist.');
+        console.error('Failed to check blacklist:', error);
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [hostname]);
+
+  const LoadingSpinner = () => {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-900"></div>
+      </div>
+    );
+  };
+
+  if (!data && !error) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-surface-2">
+    <section className="flex-1 px-4 py-8">
+      <div className="max-w-5xl mx-auto bg-surface px-5 py-5 rounded-xl border border-line shadow-sm">
+        <div className='flex items-center justify-between'>
+          <div>
+            <p className='text-sm text-muted'>Public Check</p>
+            <h2 className='text-2xl font-semibold text-ink'>Blacklist Report</h2>
+          </div>
+          <div className="flex gap-3">
+            {data && hostname && (
+              <button
+                className='text-sm font-medium text-accent hover:text-accent'
+                onClick={() => exportBlacklistCsv(hostname)}
+              >
+                Export CSV
+              </button>
+            )}
+            <button
+              className='text-sm font-medium text-accent hover:text-accent'
+              onClick={() => navigate('/')}
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+        {error ? (
+          <p className="text-bad text-center py-6">{error}</p>
+        ) : (
+          <>
+            <h1 className="text-lg font-semibold mt-5 mb-4 text-ink">Target: <span className='text-accent'>{hostname}</span></h1>
+            <div className="overflow-hidden rounded-lg border border-line">
+                <ResultTableQuick data={data} />
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+    <CreditFooter />
+    </div>
+  );
+};
+
+export default QuickCheck;
