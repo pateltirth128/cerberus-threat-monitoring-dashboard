@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cerberus — "Signal" redesign preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root, .dark{
+  --bg:12 10 11; --surface:20 16 18; --surface-2:28 21 24; --line:46 34 39; --line-strong:66 46 53;
+  --ink:237 230 232; --muted:176 158 164; --faint:122 104 110;
+  --accent:176 38 58; --on-accent:255 255 255; --ok:52 211 153; --bad:244 97 115; --warn:251 191 36; --info:224 132 154;
+}
+.light{
+  --bg:248 245 246; --surface:255 255 255; --surface-2:245 240 242; --line:229 219 222; --line-strong:208 192 197;
+  --ink:28 18 22; --muted:104 86 92; --faint:150 130 137;
+  --accent:139 26 48; --on-accent:255 255 255; --ok:5 150 105; --bad:200 32 52; --warn:180 110 10; --info:158 54 78;
+}
+*{box-sizing:border-box; border-color:rgb(var(--line));}
+html,body{margin:0;min-height:100%;}
+body{background:rgb(var(--bg));color:rgb(var(--ink));font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+::selection{background:rgb(var(--accent)/.25);}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-thumb{background:rgb(var(--line-strong));border-radius:99px;border:3px solid rgb(var(--bg))}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+.landing-bg{background:
+  radial-gradient(55rem 55rem at 88% -12%, rgb(var(--accent)/.12), transparent 60%),
+  radial-gradient(45rem 38rem at -8% 112%, rgb(var(--info)/.08), transparent 55%),
+  rgb(var(--bg));}
+
+.card{border:1px solid rgb(var(--line));background:rgb(var(--surface));border-radius:14px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:.15s cubic-bezier(.2,.6,.2,1);}
+.btn-primary{background:rgb(var(--accent));color:rgb(var(--on-accent));}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-ghost{border-color:rgb(var(--line));background:transparent;color:rgb(var(--ink))}
+.btn-ghost:hover{background:rgb(var(--surface-2));border-color:rgb(var(--line-strong))}
+.input{width:100%;border:1px solid rgb(var(--line));background:rgb(var(--surface-2));border-radius:10px;padding:12px 14px;font-size:14px;color:rgb(var(--ink));outline:none;transition:.15s;font-family:inherit;}
+.input::placeholder{color:rgb(var(--faint))}
+.input:focus{border-color:rgb(var(--accent));box-shadow:0 0 0 3px rgb(var(--accent)/.22)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid rgb(var(--line));background:rgb(var(--surface-2));border-radius:7px;padding:2px 8px;font-size:12px;color:rgb(var(--muted));font-family:'JetBrains Mono',monospace;}
+.label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgb(var(--faint));}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:99px;padding:3px 10px;font-size:12px;font-weight:600;}
+.pill-ok{background:rgb(var(--ok)/.1);color:rgb(var(--ok));box-shadow:inset 0 0 0 1px rgb(var(--ok)/.25)}
+.pill-bad{background:rgb(var(--bad)/.1);color:rgb(var(--bad));box-shadow:inset 0 0 0 1px rgb(var(--bad)/.25)}
+.pill-warn{background:rgb(var(--warn)/.1);color:rgb(var(--warn));box-shadow:inset 0 0 0 1px rgb(var(--warn)/.25)}
+.dot{width:7px;height:7px;border-radius:99px;display:inline-block;}
+
+.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:
+  linear-gradient(135deg,rgb(var(--accent)),#4a0f1c);color:#fff;font-weight:700;
+  box-shadow:inset 0 0 0 1px rgb(255 255 255 / .08);}
+.logo svg{width:20px;height:20px}
+
+.switcher{position:fixed;z-index:50;left:50%;transform:translateX(-50%);bottom:20px;display:flex;gap:4px;
+  background:rgb(var(--surface)/.9);backdrop-filter:blur(10px);border:1px solid rgb(var(--line-strong));
+  padding:5px;border-radius:12px;box-shadow:0 10px 40px -12px rgba(0,0,0,.6)}
+.switcher button{border:0;background:transparent;color:rgb(var(--muted));font-family:inherit;font-size:13px;font-weight:600;
+  padding:7px 13px;border-radius:8px;cursor:pointer;transition:.15s}
+.switcher button.active{background:rgb(var(--accent));color:rgb(var(--bg))}
+.switcher .sep{width:1px;background:rgb(var(--line-strong));margin:4px 2px}
+.switcher .tgl{color:rgb(var(--ink))}
+
+.screen{display:none}
+.screen.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.nav{position:sticky;top:0;z-index:20;border-bottom:1px solid rgb(var(--line));backdrop-filter:blur(10px);background:rgb(var(--bg)/.7)}
+.nav .wrap{height:72px;display:flex;align-items:center;justify-content:space-between}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{padding:8px 14px;border-radius:9px;font-size:14px;font-weight:500;color:rgb(var(--muted))}
+.nav-links a:hover{color:rgb(var(--ink));background:rgb(var(--surface-2))}
+.hero{padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+.tag{display:inline-flex;align-items:center;gap:8px;border:1px solid rgb(var(--accent)/.3);background:rgb(var(--accent)/.08);
+  color:rgb(var(--accent));border-radius:99px;padding:6px 14px;font-size:12px;font-weight:600}
+h1.hero-title{font-size:clamp(40px,5.5vw,68px);line-height:1.02;letter-spacing:-.02em;margin:22px 0 0;font-weight:700}
+.hero-title .accent{color:rgb(var(--accent))}
+.hero p.sub{color:rgb(var(--muted));font-size:18px;max-width:30rem;margin:22px 0 0;line-height:1.5}
+.checkbar{display:flex;gap:10px;margin-top:30px}
+.feat{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgb(var(--line))}
+.feat:last-child{border-bottom:0}
+.feat .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex:none;
+  background:rgb(var(--accent)/.1);color:rgb(var(--accent))}
+.feat .ic svg{width:19px;height:19px}
+.feat h4{margin:0;font-size:15px}
+.feat p{margin:3px 0 0;font-size:13px;color:rgb(var(--muted))}
+.statline{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
+.statline .n{font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.statline .k{font-size:12px;color:rgb(var(--faint))}
+
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl thead th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgb(var(--faint));
+  padding:11px 16px;border-bottom:1px solid rgb(var(--line));font-weight:600}
+.tbl tbody td{padding:12px 16px;border-bottom:1px solid rgb(var(--line))}
+.tbl tbody tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:rgb(var(--surface-2)/.6)}
+
+.app{display:grid;grid-template-columns:248px 1fr;min-height:720px;border:1px solid rgb(var(--line));border-radius:16px;overflow:hidden;background:rgb(var(--bg))}
+.side{background:rgb(var(--surface));border-right:1px solid rgb(var(--line));display:flex;flex-direction:column;padding:18px 14px}
+.side .brand{display:flex;align-items:center;gap:11px;padding:6px 8px 18px}
+.side .brand b{font-size:15px}.side .brand span{font-size:11px;color:rgb(var(--faint));display:block}
+.navsec{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgb(var(--faint));padding:16px 10px 7px;font-weight:600}
+.navi{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;color:rgb(var(--muted));font-size:14px;font-weight:500;cursor:pointer;transition:.12s}
+.navi svg{width:17px;height:17px;flex:none}
+.navi:hover{background:rgb(var(--surface-2));color:rgb(var(--ink))}
+.navi.on{background:rgb(var(--accent)/.12);color:rgb(var(--accent))}
+.navi.on::before{content:"";position:absolute;left:0;width:3px;height:20px;border-radius:0 3px 3px 0;background:rgb(var(--accent))}
+.navi{position:relative}
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{height:68px;border-bottom:1px solid rgb(var(--line));display:flex;align-items:center;justify-content:space-between;padding:0 26px;flex:none}
+.topbar .label{display:block}
+.topbar h3{margin:1px 0 0;font-size:17px}
+.content{padding:26px;overflow:auto}
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{padding:18px;position:relative;overflow:hidden}
+.stat .k{font-size:13px;color:rgb(var(--muted))}
+.stat .n{font-size:34px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:10px;letter-spacing:-.01em}
+.stat .u{position:absolute;left:18px;bottom:14px;height:3px;width:34px;border-radius:3px;background:rgb(var(--accent))}
+.stat.bad .u{background:rgb(var(--bad))}.stat.ok .u{background:rgb(var(--ok))}.stat.warn .u{background:rgb(var(--warn))}
+.stat .ic{position:absolute;right:16px;top:16px;color:rgb(var(--faint))}
+.stat .ic svg{width:20px;height:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.chart-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid rgb(var(--line))}
+.chart-head h4{margin:0;font-size:14px}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding:18px}
+.bar{flex:1;border-radius:5px 5px 0 0;background:linear-gradient(180deg,rgb(var(--accent)/.9),rgb(var(--accent)/.35));position:relative}
+.bar.b{background:linear-gradient(180deg,rgb(var(--bad)/.9),rgb(var(--bad)/.3))}
+.sectitle{font-size:14px;font-weight:600;margin:26px 0 13px;display:flex;align-items:center;gap:9px}
+.assets{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.asset{padding:17px;cursor:pointer}
+.asset .top{display:flex;align-items:center;justify-content:space-between}
+.asset .h{font-weight:600;font-size:15px}
+.asset .meta{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.badges{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.badge{font-size:11px;padding:3px 8px;border-radius:7px;background:rgb(var(--surface-2));color:rgb(var(--muted));border:1px solid rgb(var(--line));font-weight:500}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid rgb(var(--line));margin-top:4px}
+.tab{padding:11px 15px;font-size:14px;font-weight:500;color:rgb(var(--muted));cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:rgb(var(--accent));border-bottom-color:rgb(var(--accent))}
+.kv{display:grid;grid-template-columns:160px 1fr;gap:0}
+.kv>div{padding:12px 16px;border-bottom:1px solid rgb(var(--line));font-size:14px}
+.kv .k{color:rgb(var(--faint));font-size:13px}
+
+.login{display:grid;grid-template-columns:1fr 1fr;min-height:720px;border:1px solid rgb(var(--line));border-radius:16px;overflow:hidden}
+.login .brandside{padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.login .formside{background:rgb(var(--surface));padding:48px;display:flex;flex-direction:column;justify-content:center}
+.login .formside .inner{max-width:360px;margin:0 auto;width:100%}
+.quote{font-size:22px;line-height:1.4;font-weight:500;letter-spacing:-.01em}
+@media(max-width:900px){.hero-grid,.grid2,.statrow,.assets,.app,.login,.kv{grid-template-columns:1fr}.app,.login{display:block}}
+</style>
+</head>
+<body>
+
+<section class="screen active" id="s-landing">
+ <div class="landing-bg">
+  <header class="nav">
+    <div class="wrap">
+      <a style="display:flex;gap:11px;align-items:center">
+        <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 4 3.5 7 8 8 4.5-1 8-4 8-8V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span><b style="font-size:15px">Cerberus</b><span style="display:block;font-size:11px;color:rgb(var(--faint))">Threat Monitoring</span></span>
+      </a>
+      <nav class="nav-links">
+        <a>Home</a><a>Quick Check</a><a>Docs</a>
+        <a class="btn btn-primary" style="margin-left:8px">Open Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <span class="tag"><span class="dot" style="background:rgb(var(--accent))"></span> Open-source DNSBL &amp; abuse monitoring</span>
+        <h1 class="hero-title">Catch blacklist risk<br>before it hits your<br><span class="accent">mail delivery.</span></h1>
+        <p class="sub">Cerberus scans 60+ DNSBL providers, AbuseIPDB, DNS, SSL and email auth from one console — so you see reputation problems the moment they appear.</p>
+        <div class="checkbar">
+          <input class="input" placeholder="example.com or 8.8.8.8" style="max-width:320px" value="165.154.6.208">
+          <button class="btn btn-primary">Run Quick Check</button>
+        </div>
+        <div class="statline">
+          <div><div class="n">60+</div><div class="k">DNSBL providers</div></div>
+          <div><div class="n accent" style="color:rgb(var(--accent))">7</div><div class="k">check types</div></div>
+          <div><div class="n">/24</div><div class="k">subnet scans</div></div>
+        </div>
+      </div>
+      <div class="card" style="padding:22px">
+        <div class="label">Why teams run it</div>
+        <div style="margin-top:12px">
+          <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg></span><div><h4>Realtime provider coverage</h4><p>Dozens of DNSBL sources checked concurrently in one pass.</p></div></div>
+          <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z"/></svg></span><div><h4>Fast triage workflow</h4><p>Clear status summaries with provider-level detection detail.</p></div></div>
+          <div class="feat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4z"/><path d="M2 20h20"/></svg></span><div><h4>Scheduled monitoring</h4><p>Periodic re-checks with email &amp; webhook alerts when status flips.</p></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:34px;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid rgb(var(--line))">
+        <div style="display:flex;align-items:center;gap:10px"><strong>Blacklist report</strong><span class="chip">165.154.6.208</span></div>
+        <span class="pill-bad pill"><span class="dot" style="background:rgb(var(--bad))"></span> Listed on 2</span>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Provider</th><th>Category</th><th style="text-align:right">Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">all.s5h.net</td><td style="color:rgb(var(--muted))">spam</td><td style="text-align:right"><span class="pill-bad pill">Listed</span></td></tr>
+          <tr><td class="mono">dnsbl-3.uceprotect.net</td><td style="color:rgb(var(--muted))">policy</td><td style="text-align:right"><span class="pill-bad pill">Listed</span></td></tr>
+          <tr><td class="mono">b.barracudacentral.org</td><td style="color:rgb(var(--muted))">—</td><td style="text-align:right"><span class="pill-ok pill">Clean</span></td></tr>
+          <tr><td class="mono">zen.spamhaus.org</td><td style="color:rgb(var(--muted))">—</td><td style="text-align:right"><span class="pill-ok pill">Clean</span></td></tr>
+          <tr><td class="mono">bl.spamcop.net</td><td style="color:rgb(var(--muted))">—</td><td style="text-align:right"><span class="pill-ok pill">Clean</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="height:50px"></div>
+  </div>
+ </div>
+</section>
+
+<section class="screen" id="s-dash">
+ <div class="wrap" style="padding-top:30px;padding-bottom:70px">
+  <div class="app">
+    <aside class="side">
+      <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 4 3.5 7 8 8 4.5-1 8-4 8-8V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>Cerberus</b><span>Threat Monitoring</span></div></div>
+      <div class="navsec">Monitor</div>
+      <div class="navi on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Dashboard</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8"/></svg> Assets</div>
+      <div class="navsec">Check &amp; Lookup</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 12 5 5L20 7"/></svg> Blacklist Check</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg> Bulk Check</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Subnet / CIDR</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg> AbuseIPDB</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg> WHOIS Lookup</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg> DNS Records</div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> SSL Checker</div>
+      <div style="flex:1"></div>
+      <div class="navi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg> Settings</div>
+    </aside>
+    <div class="main">
+      <div class="topbar">
+        <div><span class="label">Overview</span><h3>Monitoring summary</h3></div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span class="pill-ok pill"><span class="dot" style="background:rgb(var(--ok))"></span> API connected</span>
+          <button class="btn btn-ghost" style="padding:9px 12px">↻ Re-check all</button>
+          <button class="btn btn-ghost" style="padding:9px 12px">Sign out</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="statrow">
+          <div class="card stat"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8"/></svg></span><div class="k">Total monitors</div><div class="n">12</div><div class="u"></div></div>
+          <div class="card stat ok"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 4 3.5 7 8 8 4.5-1 8-4 8-8V6l-8-4z"/></svg></span><div class="k">Monitoring enabled</div><div class="n">10</div><div class="u"></div></div>
+          <div class="card stat warn"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9z"/></svg></span><div class="k">Alerts enabled</div><div class="n">6</div><div class="u"></div></div>
+          <div class="card stat bad"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg></span><div class="k">Currently blacklisted</div><div class="n" style="color:rgb(var(--bad))">2</div><div class="u"></div></div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="chart-head"><h4>Blacklist history — example.org</h4><span class="chip">14d</span></div>
+            <div class="bars">
+              <div class="bar" style="height:20%"></div><div class="bar" style="height:35%"></div><div class="bar" style="height:28%"></div>
+              <div class="bar b" style="height:70%"></div><div class="bar b" style="height:85%"></div><div class="bar" style="height:40%"></div><div class="bar" style="height:22%"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="chart-head"><h4>Blacklist history — 68.183.235.6</h4><span class="chip">14d</span></div>
+            <div class="bars">
+              <div class="bar" style="height:30%"></div><div class="bar" style="height:45%"></div><div class="bar" style="height:60%"></div>
+              <div class="bar" style="height:50%"></div><div class="bar" style="height:38%"></div><div class="bar" style="height:55%"></div><div class="bar" style="height:33%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sectitle">Monitored assets <span class="chip">12</span></div>
+        <div class="assets">
+          <div class="card asset card-hover">
+            <div class="top"><span class="h">example.org</span><span class="pill-bad pill">Listed</span></div>
+            <div class="meta"><span class="chip">domain</span><span class="chip">68.183.235.6</span></div>
+            <div class="badges"><span class="badge">Blacklist</span><span class="badge">DNS</span><span class="badge">SSL</span><span class="badge">WHOIS</span></div>
+          </div>
+          <div class="card asset card-hover">
+            <div class="top"><span class="h">mail.acme.io</span><span class="pill-ok pill">Clean</span></div>
+            <div class="meta"><span class="chip">domain</span><span class="chip">203.0.113.9</span></div>
+            <div class="badges"><span class="badge">Blacklist</span><span class="badge">AbuseIPDB</span><span class="badge">DMARC</span></div>
+          </div>
+          <div class="card asset card-hover">
+            <div class="top"><span class="h">8.8.8.8</span><span class="pill-ok pill">Clean</span></div>
+            <div class="meta"><span class="chip">ip</span><span class="chip">resolver</span></div>
+            <div class="badges"><span class="badge">Blacklist</span><span class="badge">Server Up</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<section class="screen" id="s-asset">
+ <div class="wrap" style="padding-top:30px;padding-bottom:70px">
+  <div style="display:flex;align-items:center;gap:10px;color:rgb(var(--muted));font-size:14px;margin-bottom:16px">
+    <span>Assets</span><span>/</span><strong style="color:rgb(var(--ink))">example.org</strong>
+    <span class="pill-bad pill" style="margin-left:6px">Listed on 2</span>
+    <div style="flex:1"></div>
+    <button class="btn btn-ghost" style="padding:9px 13px">↻ Re-check</button>
+  </div>
+
+  <div class="statrow" style="grid-template-columns:repeat(4,1fr)">
+    <div class="card stat bad"><div class="k">Blacklist</div><div class="n" style="color:rgb(var(--bad))">2</div><div class="u"></div></div>
+    <div class="card stat warn"><div class="k">AbuseIPDB</div><div class="n">48%</div><div class="u"></div></div>
+    <div class="card stat ok"><div class="k">SSL valid</div><div class="n">63d</div><div class="u"></div></div>
+    <div class="card stat"><div class="k">DMARC</div><div class="n">B</div><div class="u"></div></div>
+  </div>
+
+  <div class="card" style="margin-top:18px;overflow:hidden">
+    <div style="padding:4px 14px 0"><div class="tabs">
+      <span class="tab on">Blacklist</span><span class="tab">AbuseIPDB</span><span class="tab">DNS</span><span class="tab">SSL</span><span class="tab">WHOIS</span><span class="tab">DMARC</span><span class="tab">Server</span>
+    </div></div>
+    <table class="tbl">
+      <thead><tr><th>Provider</th><th>Response</th><th style="text-align:right">Status</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">all.s5h.net</td><td class="mono" style="color:rgb(var(--muted))">127.0.0.2</td><td style="text-align:right"><span class="pill-bad pill">Listed</span></td></tr>
+        <tr><td class="mono">dnsbl-3.uceprotect.net</td><td class="mono" style="color:rgb(var(--muted))">127.0.0.3</td><td style="text-align:right"><span class="pill-bad pill">Listed</span></td></tr>
+        <tr><td class="mono">zen.spamhaus.org</td><td class="mono" style="color:rgb(var(--faint))">NXDOMAIN</td><td style="text-align:right"><span class="pill-ok pill">Clean</span></td></tr>
+        <tr><td class="mono">b.barracudacentral.org</td><td class="mono" style="color:rgb(var(--faint))">NXDOMAIN</td><td style="text-align:right"><span class="pill-ok pill">Clean</span></td></tr>
+        <tr><td class="mono">bl.spamcop.net</td><td class="mono" style="color:rgb(var(--faint))">timeout</td><td style="text-align:right"><span class="pill-warn pill">Failed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+ </div>
+</section>
+
+<section class="screen" id="s-login">
+ <div class="wrap" style="padding-top:30px;padding-bottom:70px">
+  <div class="login landing-bg">
+    <div class="brandside">
+      <div style="display:flex;gap:11px;align-items:center">
+        <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 4 3.5 7 8 8 4.5-1 8-4 8-8V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <div><b style="font-size:16px">Cerberus</b><div style="font-size:11px;color:rgb(var(--faint))">Threat Monitoring</div></div>
+      </div>
+      <div>
+        <div class="quote">“One console for reputation, DNS, SSL and email auth — so nothing on your perimeter goes stale without you knowing.”</div>
+        <div style="display:flex;gap:22px;margin-top:28px">
+          <div><div class="mono" style="font-size:22px;font-weight:600">60+</div><div style="font-size:12px;color:rgb(var(--faint))">DNSBL providers</div></div>
+          <div><div class="mono" style="font-size:22px;font-weight:600">7</div><div style="font-size:12px;color:rgb(var(--faint))">check types</div></div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:rgb(var(--faint))">© 2026 Tirth Patel · MIT</div>
+    </div>
+    <div class="formside">
+      <div class="inner">
+        <span class="label">Welcome back</span>
+        <h2 style="margin:8px 0 4px;font-size:26px">Sign in to Cerberus</h2>
+        <p style="margin:0 0 24px;color:rgb(var(--muted));font-size:14px">Use your operator credentials to open the dashboard.</p>
+        <label class="label">Username</label>
+        <input class="input" style="margin:7px 0 16px" value="admin">
+        <label class="label">Password</label>
+        <input class="input" style="margin:7px 0 20px" type="password" value="password123">
+        <button class="btn btn-primary" style="width:100%">Sign in →</button>
+        <div class="card" style="margin-top:18px;padding:12px 14px;font-size:13px;color:rgb(var(--muted))">
+          <span class="label">Local tip</span><div style="margin-top:4px">Default <span class="chip">admin / password123</span> — change it before exposing the app.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<div class="switcher">
+  <button class="active" data-s="s-landing">Landing</button>
+  <button data-s="s-dash">Dashboard</button>
+  <button data-s="s-asset">Asset detail</button>
+  <button data-s="s-login">Login</button>
+  <div class="sep"></div>
+  <button class="tgl" id="themeBtn">◐ Light</button>
+</div>
+
+<script>
+document.querySelectorAll('.switcher [data-s]').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.switcher [data-s]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(b.dataset.s).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+const html=document.documentElement, tb=document.getElementById('themeBtn');
+tb.onclick=()=>{
+  const light=html.classList.toggle('light'); html.classList.toggle('dark',!light);
+  tb.textContent=light?'◑ Dark':'◐ Light';
+};
+</script>
+</body>
+</html>

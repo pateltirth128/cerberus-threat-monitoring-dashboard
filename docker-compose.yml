@@ -1,0 +1,30 @@
+services:
+  backend:
+    image: ghcr.io/${GHCR_REPO:-pateltirth128/cerberus-threat-monitoring-dashboard}-backend:latest
+    build: ./backend
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_CORS_ALLOWED_ORIGINS=${APP_CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      - DATABASE_URL=sqlite:////app/data/app.db
+      - SECRET_KEY_FILE=/app/data/secret_key
+      - TRUSTED_PROXIES=${TRUSTED_PROXIES:-172.16.0.0/12,192.168.0.0/16}
+    volumes:
+      - cerberus-data:/app/data
+    ports:
+      - 8100:8100
+  frontend:
+    image: ghcr.io/${GHCR_REPO:-pateltirth128/cerberus-threat-monitoring-dashboard}-frontend:latest
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      - VITE_BASE_URL=http://backend:8100
+      - VITE_API_DOCS_URL=http://localhost:8100/swagger/
+    ports:
+      - 3000:3000
+
+volumes:
+  cerberus-data:
