@@ -334,8 +334,3 @@ MIT- see [LICENSE](LICENSE) for details. Built and maintained by Tirth Patel.
 
 <div align="center">
 
-**If Cerberus helps you, consider giving it a star!**
-
-[![GitHub stars](https://img.shields.io/github/stars/pateltirth128/cerberus-threat-monitoring-dashboard?style=social)](https://github.com/pateltirth128/cerberus-threat-monitoring-dashboard/stargazers)
-
-</div>
