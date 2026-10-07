@@ -6,7 +6,7 @@
 
 **Open-source threat monitoring toolkit for IPs, domains, and servers.**
 
-Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, and verify server uptime - all from one dashboard.
+Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, and verify server uptime — all from one dashboard.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/pateltirth128/cerberus-threat-monitoring-dashboard)](https://github.com/pateltirth128/cerberus-threat-monitoring-dashboard/releases)
@@ -18,19 +18,27 @@ Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, 
 
 ## Screenshots
 
-**Landing Page** - instant blacklist check from the homepage
+**Landing Page** — instant blacklist check from the homepage
 
 ![Landing page](files/landing.png)
 
-**Dashboard** - monitoring summary with stats and history charts
+**Quick Check** — public blacklist lookup with a per-provider result table and CSV export
+
+![Quick check](files/quick_check.png)
+
+**Sign In** — admin login with a guided "find your password" helper
+
+![Sign in](files/login.png)
+
+**Dashboard** — monitoring summary with stats and history charts
 
 ![Dashboard](files/dashboard.png)
 
-**Assets** - card-based view of all monitored hostnames with check badges
+**Assets** — card-based view of all monitored hostnames with check badges
 
 ![Assets](files/assets.png)
 
-**Asset Detail** - tabbed results for every enabled check (Blacklist, AbuseIPDB, DNS, SSL, WHOIS, DMARC, Server Status)
+**Asset Detail** — tabbed results for every enabled check (Blacklist, AbuseIPDB, DNS, SSL, WHOIS, DMARC, Server Status)
 
 ![Asset detail](files/asset_details.png)
 
@@ -95,7 +103,7 @@ No vendor lock-in. No paid tiers. Self-host it and own your data.
 
 ```bash
 git clone https://github.com/pateltirth128/cerberus-threat-monitoring-dashboard
-cd cerberus
+cd cerberus-threat-monitoring-dashboard
 cp backend/.env.example .env    # configure your settings
 docker compose up --build
 ```
@@ -132,6 +140,26 @@ yarn dev
 ```
 
 Open `http://localhost:3000`.
+
+**Windows (PowerShell, with npm):**
+
+```powershell
+# Terminal 1: backend
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+copy .env.example .env
+uvicorn app.main:app --port 8100 --reload
+
+# Terminal 2: frontend
+cd frontend
+copy .env.example .env
+npm install
+npm run dev
+```
+
+> If `Activate.ps1` is blocked, run `Set-ExecutionPolicy -Scope Process Bypass` first.
 
 </details>
 
@@ -251,11 +279,12 @@ Full interactive docs available after startup:
 ## Project Structure
 
 ```
-cerberus/
+cerberus-threat-monitoring-dashboard/
+├── .github/workflows/     # Docker image publish
 ├── backend/
 │   └── app/
-│       ├── api/routers/       # auth, blacklist, hostname, tools
-│       ├── core/              # config, JWT security
+│       ├── api/routers/       # auth, blacklist, dmarc, hostname, settings, tools
+│       ├── core/              # config, JWT security, rate limiting, network safety
 │       ├── db/                # SQLAlchemy session, seed data
 │       ├── models/            # ORM models
 │       ├── schemas/           # Pydantic schemas
@@ -267,11 +296,14 @@ cerberus/
 │       ├── pages/             # Landing, Login, Assets, AssetDetail,
 │       │                      # Dashboard, Check & Lookup tools
 │       ├── components/        # Reusable UI (shared: Skeleton, CopyButton,
-│       │                      # TimeAgo, AutoRefresh, ErrorBoundary)
+│       │                      # TimeAgo, AutoRefresh, ErrorBoundary, TypingText;
+│       │                      # landing: Hero, Navbar, Help / How-to / Find-password dialogs)
 │       ├── services/          # API client functions, auth, theme
 │       └── routes/            # React Router config
+├── backend/tests/             # pytest suite (DNSBL, security)
+├── files/                     # logo and README screenshots
 ├── docker-compose.yml
-└── .env
+└── .env                       # your local config (not committed)
 ```
 
 ---
@@ -284,7 +316,7 @@ cerberus/
 | **v1.1.1** | March 25, 2026 | UX polish, responsive mobile layout, asset re-check, code splitting, security fixes |
 | **v1.1.0** | March 23, 2026 | Asset management, DNS/SSL/DMARC tools, bulk & subnet check, scheduled monitoring, dark mode, 60+ DNSBL providers |
 | **v1.0.1** | March 19, 2026 | AbuseIPDB, WHOIS lookup, server status checker, security hardening |
-| **v1.0.0** | March 2, 2026 | Initial release - DNSBL monitoring, dashboard, delist workflow |
+| **v1.0.0** | March 2, 2026 | Initial release — DNSBL monitoring, dashboard, delist workflow |
 
 See [CHANGELOG.md](CHANGELOG.md) for full details.
 
@@ -296,7 +328,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## License
 
-MIT - see [LICENSE](LICENSE) for details. Built and maintained by Tirth Patel.
+MIT — see [LICENSE](LICENSE) for details. Built and maintained by Tirth Patel.
 
 ---
 
