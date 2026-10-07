@@ -159,7 +159,7 @@ export default function AssetDetail() {
                   </span>
                 ))}
                 {asset.is_monitor_enabled && (
-                  <span className="inline-flex rounded bg-violet-50 text-violet-700 px-2 py-0.5 text-[10px] font-bold border border-violet-200 ">
+                  <span className="inline-flex rounded bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-bold border border-accent/30 ">
                     MONITORING
                   </span>
                 )}
@@ -263,7 +263,7 @@ function SummaryCard({ label, value, tone }) {
     rose: 'bg-bad/12 border-bad/30 text-bad ',
     emerald: 'bg-ok/12 border-ok/30 text-ok ',
     sky: 'bg-info/12 border-info/30 text-info ',
-    violet: 'bg-violet-50 border-violet-200 text-violet-700 ',
+    violet: 'bg-accent/12 border-accent/30 text-accent ',
     amber: 'bg-warn/12 border-warn/30 text-warn ',
     slate: 'bg-surface-2 border-line text-muted ',
   };

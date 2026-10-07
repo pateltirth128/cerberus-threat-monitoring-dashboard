@@ -29,7 +29,7 @@ export default function Home() {
         total: list.length,
         monitoringEnabled: list.filter((item) => item.is_monitor_enabled).length,
         alertEnabled: list.filter((item) => item.is_alert_enabled).length,
-        blacklisted: list.filter((item) => item.result?.is_blacklisted).length,
+        blacklisted: list.filter((item) => item.is_blacklisted).length,
       });
     } catch (err) {
       setError("Failed to load dashboard stats. Please check your connection.");
