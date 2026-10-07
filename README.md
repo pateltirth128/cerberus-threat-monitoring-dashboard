@@ -6,7 +6,7 @@
 
 **Open-source threat monitoring toolkit for IPs, domains, and servers.**
 
-Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, and verify server uptime — all from one dashboard.
+Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, and verify server uptime; all from one dashboard.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/pateltirth128/cerberus-threat-monitoring-dashboard)](https://github.com/pateltirth128/cerberus-threat-monitoring-dashboard/releases)
@@ -18,27 +18,27 @@ Check blacklists, query AbuseIPDB, inspect DNS/SSL/DMARC records, scan subnets, 
 
 ## Screenshots
 
-**Landing Page** — instant blacklist check from the homepage
+**Landing Page** | instant blacklist check from the homepage
 
 ![Landing page](files/landing.png)
 
-**Quick Check** — public blacklist lookup with a per-provider result table and CSV export
+**Quick Check** | public blacklist lookup with a per-provider result table and CSV export
 
 ![Quick check](files/quick_check.png)
 
-**Sign In** — admin login with a guided "find your password" helper
+**Sign In** | admin login with a guided "find your password" helper
 
 ![Sign in](files/login.png)
 
-**Dashboard** — monitoring summary with stats and history charts
+**Dashboard** | monitoring summary with stats and history charts
 
 ![Dashboard](files/dashboard.png)
 
-**Assets** — card-based view of all monitored hostnames with check badges
+**Assets** | card-based view of all monitored hostnames with check badges
 
 ![Assets](files/assets.png)
 
-**Asset Detail** — tabbed results for every enabled check (Blacklist, AbuseIPDB, DNS, SSL, WHOIS, DMARC, Server Status)
+**Asset Detail** | tabbed results for every enabled check (Blacklist, AbuseIPDB, DNS, SSL, WHOIS, DMARC, Server Status)
 
 ![Asset detail](files/asset_details.png)
 
@@ -316,7 +316,7 @@ cerberus-threat-monitoring-dashboard/
 | **v1.1.1** | March 25, 2026 | UX polish, responsive mobile layout, asset re-check, code splitting, security fixes |
 | **v1.1.0** | March 23, 2026 | Asset management, DNS/SSL/DMARC tools, bulk & subnet check, scheduled monitoring, dark mode, 60+ DNSBL providers |
 | **v1.0.1** | March 19, 2026 | AbuseIPDB, WHOIS lookup, server status checker, security hardening |
-| **v1.0.0** | March 2, 2026 | Initial release — DNSBL monitoring, dashboard, delist workflow |
+| **v1.0.0** | March 2, 2026 | Initial release DNSBL monitoring, dashboard, delist workflow |
 
 See [CHANGELOG.md](CHANGELOG.md) for full details.
 
@@ -328,7 +328,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details. Built and maintained by Tirth Patel.
+MIT- see [LICENSE](LICENSE) for details. Built and maintained by Tirth Patel.
 
 ---
 
