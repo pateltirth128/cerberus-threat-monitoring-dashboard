@@ -51,12 +51,8 @@ export default function Home() {
 
   return (
     <section className="space-y-5">
-      <div className="card p-5 flex items-center justify-between">
-        <div>
-          <p className="label">Overview</p>
-          <h2 className="text-2xl font-semibold text-ink mt-1">Monitoring Summary</h2>
-          <p className="text-muted mt-2 text-sm">Track your monitored assets and prioritize blacklist incidents.</p>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-muted text-sm">Your monitored assets at a glance.</p>
         <AutoRefresh onRefresh={loadStats} loading={loading} />
       </div>
 
@@ -69,10 +65,10 @@ export default function Home() {
       ) : (
         <>
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
-            <StatGrid title="Total Monitors" bodyText={stats.total} icon={<HiDesktopComputer />} tone="accent" />
-            <StatGrid title="Monitoring Enabled" bodyText={stats.monitoringEnabled} icon={<HiShieldCheck />} tone="emerald" />
-            <StatGrid title="Alert Enabled" bodyText={stats.alertEnabled} icon={<HiBell />} tone="amber" />
-            <StatGrid title="Currently Blacklisted" bodyText={stats.blacklisted} icon={<HiExclamationCircle />} tone="rose" />
+            <StatGrid title="Monitored assets" bodyText={stats.total} icon={<HiDesktopComputer />} tone="accent" />
+            <StatGrid title="Monitoring on" bodyText={stats.monitoringEnabled} icon={<HiShieldCheck />} tone="emerald" />
+            <StatGrid title="Alerts on" bodyText={stats.alertEnabled} icon={<HiBell />} tone="amber" />
+            <StatGrid title="Blacklisted now" bodyText={stats.blacklisted} icon={<HiExclamationCircle />} tone="rose" />
           </div>
 
           {hostnames.length > 0 && (

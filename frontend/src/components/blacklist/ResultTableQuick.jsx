@@ -15,6 +15,13 @@ const ResultTableQuick = ({ data }) => {
     return detectedList.some((item) => item.provider === provider);
   };
 
+  const failedList = data?.failed_providers || [];
+  const statusOf = (provider) => {
+    if (isBlacklisted(provider)) return { label: 'Listed', className: 'bg-bad/12 text-bad' };
+    if (failedList.includes(provider)) return { label: 'No answer', className: 'bg-surface-2 text-faint' };
+    return { label: 'Clean', className: 'bg-ok/12 text-ok' };
+  };
+
   const abuse = data.abuseipdb;
 
   const scoreColor = (score) => {
@@ -77,10 +84,10 @@ const ResultTableQuick = ({ data }) => {
           <tbody>
             {providers.map((provider, index) => (
               <tr key={index} className="border-b border-line hover:bg-surface-2/60">
-                <td className="px-4 py-2.5 font-medium">{provider}</td>
+                <td className="px-4 py-2.5 font-mono text-sm">{provider}</td>
                 <td className="px-4 py-2.5">
-                  <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${isBlacklisted(provider) ? 'bg-bad/12 text-bad' : 'bg-ok/12 text-ok'}`}>
-                    {isBlacklisted(provider) ? 'Blacklisted' : 'Clear'}
+                  <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusOf(provider).className}`}>
+                    {statusOf(provider).label}
                   </span>
                 </td>
               </tr>

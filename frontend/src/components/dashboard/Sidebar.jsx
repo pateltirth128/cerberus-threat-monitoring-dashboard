@@ -1,22 +1,13 @@
 import React from 'react'
 import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_SECTIONS } from './constants'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { HiOutlineLogout, HiX } from 'react-icons/hi'
+import { Link, useLocation } from 'react-router-dom'
+import { HiX } from 'react-icons/hi'
 import classNames from 'classnames'
-import { useAuth } from '../../services/auth/authProvider'
 
 const linkClass =
   'relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150'
 
 export default function Sidebar({ open, onClose }) {
-  const navigate = useNavigate();
-  const { setToken } = useAuth();
-
-  const handleLogout = () => {
-    setToken(null, null);
-    navigate('/', { replace: true });
-  }
-
   return (
     <>
       {open && (
@@ -37,18 +28,19 @@ export default function Sidebar({ open, onClose }) {
             <img src="/logo.png" alt="Cerberus" className='h-9 w-9 rounded-xl object-cover ring-1 ring-line' />
             <div>
               <p className='text-ink text-base font-semibold leading-none'>Cerberus</p>
-              <p className='text-faint text-xs mt-1'>Threat Monitoring</p>
+              <p className='text-faint text-xs mt-1'>Threat Monitoring with Tirth</p>
             </div>
           </div>
           <button
             onClick={onClose}
+            aria-label='Close menu'
             className='lg:hidden p-2 rounded-lg hover:bg-surface-2 text-muted'
           >
             <HiX className='text-lg' />
           </button>
         </div>
 
-        <div className='flex-1 py-4 flex flex-col gap-5'>
+        <nav className='flex-1 py-4 flex flex-col gap-5' aria-label='Dashboard'>
           {DASHBOARD_SIDEBAR_SECTIONS.map((section) => (
             <div key={section.label}>
               <p className='px-3 mb-2 label'>{section.label}</p>
@@ -59,18 +51,12 @@ export default function Sidebar({ open, onClose }) {
               </div>
             </div>
           ))}
-        </div>
+        </nav>
 
-        <div className='flex flex-col gap-1 pt-3 border-t border-line'>
+        <div className='flex flex-col gap-0.5 pt-3 border-t border-line'>
           {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map(item => (
             <SidebarLink key={item.key} item={item} onClose={onClose}/>
           ))}
-          <button
-            className={classNames('text-bad hover:bg-bad/10 w-full text-left', linkClass)}
-            onClick={handleLogout}>
-            <span className='text-lg'><HiOutlineLogout /></span>
-            Logout
-          </button>
         </div>
       </aside>
     </>

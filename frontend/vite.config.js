@@ -25,7 +25,9 @@ export default ({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: process.env.VITE_BASE_URL,
+          // Backend address. Defaults to uvicorn's default port (8000).
+          // Set VITE_BASE_URL in frontend/.env to change it.
+          target: process.env.VITE_BASE_URL || 'http://127.0.0.1:8000',
           secure: false,
           changeOrigin: true,
           xfwd: true,

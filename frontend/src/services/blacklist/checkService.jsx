@@ -36,7 +36,21 @@ export const checkBlacklist = async (hostname) => {
   }
 };
 
+// True when the backend could not be reached at all (server not running,
+// or the dev proxy could not connect), as opposed to a real error message.
+const isBackendOffline = (error) => {
+  if (!error.response) return Boolean(error.request);
+  const { status, data } = error.response;
+  const hasMessage = data && typeof data === 'object' && (data.detail || data.error);
+  return status >= 500 && !hasMessage;
+};
+
 const handleRequestError = (error, customErrorMessage) => {
+  if (isBackendOffline(error)) {
+    const offlineError = new Error('The live backend is offline.');
+    offlineError.offline = true;
+    throw offlineError;
+  }
   if (error.response) {
     const detail =
       error.response?.data?.detail ||

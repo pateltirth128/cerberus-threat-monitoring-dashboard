@@ -1,11 +1,13 @@
 import React from 'react';
-import { HiOutlineLogout, HiShieldCheck, HiMoon, HiSun, HiMenu } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { HiOutlineLogout, HiMoon, HiSun, HiMenu } from 'react-icons/hi';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../services/auth/authProvider';
 import { useTheme } from '../../services/theme/themeProvider';
+import { getPageTitle } from './constants';
 
 export default function Header({ onMenuToggle }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { setToken } = useAuth();
   const { dark, toggleTheme } = useTheme();
 
@@ -19,31 +21,24 @@ export default function Header({ onMenuToggle }) {
       <div className='flex items-center gap-3'>
         <button
           onClick={onMenuToggle}
+          aria-label='Open menu'
           className='lg:hidden p-2 rounded-lg text-muted hover:bg-surface-2 transition-colors'
         >
           <HiMenu className='text-xl' />
         </button>
-        <div>
-          <p className='label'>Security Dashboard</p>
-          <h1 className='text-base font-semibold text-ink'>Realtime Blacklist Monitoring</h1>
-        </div>
+        <h1 className='text-base font-semibold text-ink'>{getPageTitle(pathname)}</h1>
       </div>
-      <div className='flex items-center gap-3'>
-        <div className='hidden md:inline-flex items-center gap-2 pill-ok'>
-          <HiShieldCheck className='text-sm' /> API Connected
-        </div>
+      <div className='flex items-center gap-2'>
         <button
           onClick={toggleTheme}
           className='p-2 rounded-lg border border-line text-muted hover:bg-surface-2 hover:text-ink transition-colors'
           title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {dark ? <HiSun className="text-lg" /> : <HiMoon className="text-lg" />}
+          {dark ? <HiSun className='text-lg' /> : <HiMoon className='text-lg' />}
         </button>
-        <button
-          onClick={handleLogout}
-          className='btn-ghost !px-3 !py-2'
-        >
-          <HiOutlineLogout /> <span className="hidden sm:inline">Sign out</span>
+        <button onClick={handleLogout} className='btn-ghost !px-3 !py-2'>
+          <HiOutlineLogout /> <span className='hidden sm:inline'>Sign out</span>
         </button>
       </div>
     </header>
